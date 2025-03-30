@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   webapp:
     image: webapp:latest
@@ -21,7 +22,7 @@ services:
       - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=db;Database=MyDatabase;User=sa;Password=Your_password123;
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
     depends_on:
       - db
 
