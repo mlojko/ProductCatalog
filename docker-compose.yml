@@ -12,6 +12,18 @@ services:
       - AppSettings__ApiBaseUrl=http://api:8080/api/v1
     depends_on:
       - api
+      - migration
+  
+  migration:
+    image: migration:latest
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+      target: migrations
+    environment:
+    - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
+    depends_on:
+    - db
 
   api:
     image: api:latest
@@ -26,7 +38,7 @@ services:
       - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
     depends_on:
       - db
-
+  
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
