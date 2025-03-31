@@ -9,6 +9,7 @@ services:
       - "5000:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - AppSettings__ApiBaseUrl=http://api:8080/api/v1
     depends_on:
       - api
 
