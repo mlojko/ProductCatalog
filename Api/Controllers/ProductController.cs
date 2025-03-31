@@ -48,7 +48,9 @@ namespace Api.Controllers
             {
                 Name = product.Name,
                 Description = product.Description,
-                Price = product.Price
+                Price = product.Price,
+                Stock = product.Stock
+
             };
             await _productService.AddProductAsync(newProduct);
             return CreatedAtRoute("GetProduct", new { id = newProduct.Id }, newProduct);
