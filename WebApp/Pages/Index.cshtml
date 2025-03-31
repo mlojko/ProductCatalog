@@ -8,10 +8,6 @@
     var culture = CultureInfo.CreateSpecificCulture("en-US");
 }
 
-<script>
-    var productList = JSON.parse("@Html.Raw(Model.Products)");
-</script>
-
 <div class="text-center">
     @if (Model.Products != null)
     {
@@ -36,17 +32,17 @@
                 </div>
 
                 columnCount++;
-                if (columnCount == 3)
+                @if (columnCount == 3)
                 {
                     columnCount = 0;
                     @:</div>
                 }
             }
 
-            @if (columnCount != 0)
-            {
-                @:</div>
-            }
+            @* @if (columnCount != 0) *@
+            @* { *@
+            @*     @:</div> *@
+            @* } *@
         </div>
     }
 </div>
