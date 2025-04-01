@@ -15,12 +15,20 @@ namespace Api.Infrastructure.Services
         public string GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-            var claims = new[]
+            var claims = new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new (JwtRegisteredClaimNames.UniqueName, user.Username),
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            foreach(var role in user.UserRoles)
+            {
+                if (role.Role != null)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role.Role.Name));
+                }
+            }
 
             var token = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,

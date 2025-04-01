@@ -10,12 +10,18 @@ namespace Api.Infrastructure.Services
 
         public async Task<User?> GetById(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .SingleOrDefaultAsync(u => u.Id == id);
         }
 
         public Task<User?> GetByUsername(string userName)
         {
-            return _context.Users.SingleOrDefaultAsync(u => u.Username == userName);
+            return _context.Users.Include(u => u.UserRoles)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .SingleOrDefaultAsync(u => u.Username.Equals(userName, StringComparison.CurrentCulture));
         }
     }
 }

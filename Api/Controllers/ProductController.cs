@@ -44,7 +44,7 @@ namespace Api.Controllers
 
         [HttpPost("AddProduct", Name = "AddProduct")]
         [MapToApiVersion("1.0")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddProduct([FromBody] ProductPayload product)
         {
             var newProduct = new Product
@@ -61,7 +61,7 @@ namespace Api.Controllers
 
         [HttpPut("UpdateProduct/{id}", Name = "UpdateProduct")]
         [MapToApiVersion("1.0")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
         {
             if (id != product.Id)
@@ -75,7 +75,7 @@ namespace Api.Controllers
 
         [HttpDelete("DeleteProduct/{id}", Name = "DeleteProduct")]
         [MapToApiVersion("1.0")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             await _productService.DeleteProductAsync(id);
