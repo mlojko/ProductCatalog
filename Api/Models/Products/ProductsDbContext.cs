@@ -1,3 +1,4 @@
+using Api.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models.Products
@@ -9,6 +10,7 @@ namespace Api.Models.Products
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +32,11 @@ namespace Api.Models.Products
             }
 
             modelBuilder.Entity<Product>().HasData(products);
+
+            modelBuilder.Entity<User>().HasData(
+                new User() { Id = 1, Username = "admin", Password = "$2a$11$M5oW82FBNXNkmXNEoEo7hepd.Nnz2vkFEz/riZUKSgH8T6MgrAxda" },
+                new User() { Id = 2, Username = "viewer", Password = "$2a$11$.sMJ./zBiI4quAi6F4mqwurhB8H3IlTYBcDVCo/O1nREh7dBkF1M." }
+            );
         }
     }
 }

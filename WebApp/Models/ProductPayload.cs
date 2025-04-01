@@ -6,7 +6,7 @@ namespace WebApp.Models
     {
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [Range(0.01, 10000.00)]
@@ -17,6 +17,6 @@ namespace WebApp.Models
         public int Stock { get; set; }
 
         [StringLength(1000)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 }
