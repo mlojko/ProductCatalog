@@ -30,7 +30,7 @@ namespace WebApp.Pages
             {
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };                
                 var httpClient = _clientFactory.CreateClient();
-                var httpResponseMessage = await httpClient.PostAsJsonAsync($"{_appSettings.ApiBaseUrl}/AddProduct", Product);
+                var httpResponseMessage = await httpClient.PostAsJsonAsync($"{_appSettings.ApiBaseUrl}/Product/AddProduct", Product);
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     var responseString = await httpResponseMessage.Content.ReadAsStringAsync();

@@ -17,7 +17,7 @@ namespace WebApp.Pages
         public async Task<IActionResult> OnGet(int id)
         {
             var httpClient = _clientFactory.CreateClient();
-            var httpResponseMessage = await httpClient.GetAsync($"{_appSettings.ApiBaseUrl}/GetProduct/{id}");
+            var httpResponseMessage = await httpClient.GetAsync($"{_appSettings.ApiBaseUrl}/Product/GetProduct/{id}");
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
@@ -45,7 +45,7 @@ namespace WebApp.Pages
             try
             {
                 var httpClient = _clientFactory.CreateClient();
-                var httpResponseMessage = await httpClient.PutAsJsonAsync($"{_appSettings.ApiBaseUrl}/UpdateProduct/{Product.Id}", Product);
+                var httpResponseMessage = await httpClient.PutAsJsonAsync($"{_appSettings.ApiBaseUrl}/Product/UpdateProduct/{Product.Id}", Product);
                 if (!httpResponseMessage.IsSuccessStatusCode)
                 {
                     ModelState.AddModelError("All", "Server error. Please contact administrator.");

@@ -6,13 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers
 {
     [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [ApiVersion("2.0", Deprecated = true)]
     public class ProductController(IProductService productService) : Controller
     {
         private readonly IProductService _productService = productService;
 
-        [HttpGet("/api/v{version:apiVersion}/getproducts", Name = "GetProducts")]
+        [HttpGet("GetProducts", Name = "GetProducts")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetProducts()
         {
@@ -20,7 +21,7 @@ namespace Api.Controllers
             return Ok(products);
         }
 
-        [HttpGet("/api/v{version:apiVersion}/getproducts", Name = "GetProductsV2")]        
+        [HttpGet("GetProducts", Name = "GetProductsV2")]        
         [MapToApiVersion("2.0")]
         public async Task<IActionResult> GetProductsV2()
         {
@@ -28,7 +29,7 @@ namespace Api.Controllers
             return Ok(products);
         }
 
-        [HttpGet("/api/v{version:apiVersion}/GetProduct/{id}", Name = "GetProduct")]
+        [HttpGet("GetProduct/{id}", Name = "GetProduct")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetProduct(int id)
         {
@@ -40,7 +41,7 @@ namespace Api.Controllers
             return Ok(product);
         }
 
-        [HttpPost("/api/v{version:apiVersion}/AddProduct", Name = "AddProduct")]
+        [HttpPost("AddProduct", Name = "AddProduct")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> AddProduct([FromBody] ProductPayload product)
         {
@@ -56,7 +57,7 @@ namespace Api.Controllers
             return CreatedAtRoute("GetProduct", new { id = newProduct.Id }, newProduct);
         }
 
-        [HttpPut("/api/v{version:apiVersion}/UpdateProduct/{id}", Name = "UpdateProduct")]
+        [HttpPut("UpdateProduct/{id}", Name = "UpdateProduct")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
         {
@@ -69,7 +70,7 @@ namespace Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("/api/v{version:apiVersion}/DeleteProduct/{id}", Name = "DeleteProduct")]
+        [HttpDelete("DeleteProduct/{id}", Name = "DeleteProduct")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

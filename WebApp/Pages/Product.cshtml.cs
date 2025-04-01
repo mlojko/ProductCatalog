@@ -22,7 +22,7 @@ namespace WebApp.Pages
             {
                 return NotFound();
             }
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_appSettings.ApiBaseUrl}/GetProduct/{id}")
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_appSettings.ApiBaseUrl}/Product/GetProduct/{id}")
             {
                 Headers =
                 {
@@ -59,7 +59,7 @@ namespace WebApp.Pages
             try
             {
                 var httpClient = _clientFactory.CreateClient();
-                var httpResponseMessage = await httpClient.DeleteAsync($"{_appSettings.ApiBaseUrl}/DeleteProduct/{Product.Id}");
+                var httpResponseMessage = await httpClient.DeleteAsync($"{_appSettings.ApiBaseUrl}/Product/DeleteProduct/{Product.Id}");
                 if (!httpResponseMessage.IsSuccessStatusCode)
                 {
                     ModelState.AddModelError("All", "Server error. Please contact administrator.");

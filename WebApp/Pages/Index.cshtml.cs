@@ -15,7 +15,7 @@ namespace WebApp.Pages
 
         public async Task OnGet()
         {
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_appSettings.ApiBaseUrl}/GetProducts")
+            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_appSettings.ApiBaseUrl}/Product/GetProducts")
             {
                 Headers =
                 {
