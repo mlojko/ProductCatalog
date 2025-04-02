@@ -4,10 +4,11 @@
 @using System.Globalization
 
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Products";
     var culture = CultureInfo.CreateSpecificCulture("en-US");
 }
 
+<div asp-validation-summary="All" class="text-danger"></div>
 <div class="text-center">
     @if (Model.Products != null)
     {
@@ -38,11 +39,6 @@
                     @:</div>
                 }
             }
-
-            @* @if (columnCount != 0) *@
-            @* { *@
-            @*     @:</div> *@
-            @* } *@
         </div>
     }
 </div>

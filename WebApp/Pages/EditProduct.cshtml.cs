@@ -1,18 +1,17 @@
-using System.Text.Json;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Options;
 using WebApp.Models;
 using WebApp.Services;
 
 namespace WebApp.Pages
 {
     [Authorize]
-    public class EditProductModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory, IAuthService authService) : PageModel
+    public class EditProductModel(ILogger<EditProductModel> logger, IProductService productService, IAuthService authService) : PageModel
     {
-        private readonly AppSettings _appSettings = _configuration.Value;
-        private readonly IHttpClientFactory _clientFactory = clientFactory;
+        private readonly ILogger<EditProductModel> _logger = logger;
+        private readonly IProductService _productService = productService;
         private readonly IAuthService _authService = authService;
 
         [BindProperty]
@@ -20,23 +19,24 @@ namespace WebApp.Pages
 
         public async Task<IActionResult> OnGet(int id)
         {
-            var httpClient = _clientFactory.CreateClient();
-            var httpResponseMessage = await httpClient.GetAsync($"{_appSettings.ApiBaseUrl}/Product/GetProduct/{id}");
-            if (httpResponseMessage.IsSuccessStatusCode)
+            try
             {
-                var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
-                Product = JsonSerializer.Deserialize<ProductResponse>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                if (Product == null)
+                var productResponse = await _productService.GetProductAsync(id);
+                var firstProduct = productResponse.Products?.FirstOrDefault();
+
+                if (productResponse.IsSuccessStatusCode && firstProduct != null && firstProduct.Id > 0)
                 {
-                    return NotFound();
+                    Product = firstProduct;
+                    return Page();
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound();
+                ModelState.AddModelError("All", "Server error. Please contact administrator.");
+                _logger.LogError(ex, $"Error getting product with ID {id}.");
             }
 
-            return Page();
+            return NotFound();
         }
 
         public async Task<IActionResult> OnPost()
@@ -49,22 +49,26 @@ namespace WebApp.Pages
             try
             {
                 var token = await _authService.GetTokenAsync() ?? string.Empty;
-                var httpClient = _clientFactory.CreateClient();
-                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-                var httpResponseMessage = await httpClient.PutAsJsonAsync($"{_appSettings.ApiBaseUrl}/Product/UpdateProduct/{Product.Id}", Product);
-                if (!httpResponseMessage.IsSuccessStatusCode)
+                var productResponse = await _productService.UpdateProductAsync(Product.Id, Product, token);
+                
+                if (productResponse.IsSuccessStatusCode)
                 {
-                    ModelState.AddModelError("All", "Server error. Please contact administrator.");
+                    return RedirectPermanent($"/product/{Product.Id}");
+                }
+
+                if (productResponse.StatusCode == HttpStatusCode.Forbidden || productResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    ModelState.AddModelError("All", "Only Administrators can edit products. Please sign in as an administrator.");
                     return Page();
                 }
             }
-            catch (HttpRequestException)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("All", "Server error. Please contact administrator.");
-                return Page();
+                _logger.LogError(ex, $"Error updating product with ID {Product.Id}.");
             }
 
-            return RedirectPermanent($"/product/{Product.Id}");
+            ModelState.AddModelError("All", "Server error. Please contact administrator.");
+            return Page();
         }
     }
 }

@@ -1,55 +1,42 @@
 using System.Net;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using WebApp.Models;
 using WebApp.Services;
 
 namespace WebApp.Pages
 {
     [Authorize]
-    public class ProductModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory, IAuthService authService) : PageModel
+    public class ProductModel(ILogger<ProductModel> logger, IProductService productService, IAuthService authService) : PageModel
     {
-        private readonly AppSettings _appSettings = _configuration.Value;
-        private readonly IHttpClientFactory _clientFactory = clientFactory;
+        private readonly ILogger<ProductModel> _logger = logger;
+        private readonly IProductService _productService = productService;
         private readonly IAuthService _authService = authService;
 
         [BindProperty]
         public ProductResponse? Product { get; set; }
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult> OnGet(int id)
         {
-            var idVal = Request.RouteValues["id"];
-            if (!int.TryParse(idVal?.ToString(), out var id))
-            {
-                return NotFound();
-            }
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_appSettings.ApiBaseUrl}/Product/GetProduct/{id}")
-            {
-                Headers =
-                {
-                    { HeaderNames.Accept, "*/*" }
-                }
-            };
             try
             {
-                var httpClient = _clientFactory.CreateClient();
-                var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
-                if (httpResponseMessage.IsSuccessStatusCode)
+                var productResponse = await _productService.GetProductAsync(id);
+                var firstProduct = productResponse.Products?.FirstOrDefault();
+
+                if (productResponse.IsSuccessStatusCode && firstProduct != null && firstProduct.Id > 0)
                 {
-                    var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
-                    Product = JsonSerializer.Deserialize<ProductResponse>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    Product = firstProduct;
+                    return Page();
                 }
             }
-            catch (HttpRequestException)
+            catch (Exception ex)
             {
-                return NotFound();
+                ModelState.AddModelError("All", "Server error. Please contact administrator.");
+                _logger.LogError(ex, $"Error getting product with ID {id}.");
             }
 
-            return Product == null ? NotFound() : Page();
+            return NotFound();
         }
 
         public async Task<IActionResult> OnPostDeleteAsync()
@@ -64,26 +51,25 @@ namespace WebApp.Pages
             try
             {
                 var token = await _authService.GetTokenAsync() ?? string.Empty;
-                var httpClient = _clientFactory.CreateClient();
-                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-                var httpResponseMessage = await httpClient.DeleteAsync($"{_appSettings.ApiBaseUrl}/Product/DeleteProduct/{Product.Id}");
-                if (httpResponseMessage.IsSuccessStatusCode)
+                var productResponse = await _productService.DeleteProductAsync(Product.Id, token);
+
+                if (productResponse.IsSuccessStatusCode)
                 {
                     return RedirectToPage("/Index");
                 }
 
-                if (httpResponseMessage.StatusCode == HttpStatusCode.Forbidden)
+                if (productResponse.StatusCode == HttpStatusCode.Forbidden || productResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    ModelState.AddModelError("All", "Only administrators can delete products. Log in as administrator.");
-                } else
-                {
-                    ModelState.AddModelError("All", "Server error. Please contact administrator.");
+                    ModelState.AddModelError("All", "Only administrators can delete products. Log in as an administrator.");
+                    return Page();
                 }
             }
-            catch (HttpRequestException)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("All", "Server error. Please contact administrator.");
+                _logger.LogError(ex, $"Error deleting product with ID {Product.Id}.");
             }
+
+            ModelState.AddModelError("All", "Server error. Please contact administrator.");
             return Page();
         }
     }

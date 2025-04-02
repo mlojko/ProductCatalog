@@ -1,9 +1,5 @@
-using System.Text.Json;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Options;
 using WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.Services;
@@ -11,14 +7,14 @@ using WebApp.Services;
 namespace WebApp.Pages
 {
     [Authorize]
-    public class CreateProductModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory, IAuthService authService) : PageModel
+    public class CreateProductModel(ILogger<CreateProductModel> logger, IProductService productService, IAuthService authService) : PageModel
     {
-        private readonly IHttpClientFactory _clientFactory = clientFactory;
-        private readonly AppSettings _appSettings = _configuration.Value;
+        private readonly ILogger<CreateProductModel> _logger = logger;
+        private readonly IProductService _productService = productService;
         private readonly IAuthService _authService = authService;
 
         [BindProperty]
-        public ProductPayload? Product { get; set; }
+        public ProductPayload Product { get; set; } = new ProductPayload();
 
         public void OnGet()
         {
@@ -30,39 +26,31 @@ namespace WebApp.Pages
             {
                 return Page();
             }
-            
-            ProductResponse? productResponse;            
+
             try
             {
                 var token = await _authService.GetTokenAsync() ?? string.Empty;
+                var productResponse = await _productService.AddProductAsync(Product, token);
+                var firstProduct = productResponse.Products?.FirstOrDefault();
 
-                var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };                
-                var httpClient = _clientFactory.CreateClient();
-                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-                var httpResponseMessage = await httpClient.PostAsJsonAsync($"{_appSettings.ApiBaseUrl}/Product/AddProduct", Product);
-                if (httpResponseMessage.IsSuccessStatusCode)
+                if (productResponse.IsSuccessStatusCode && firstProduct != null && firstProduct.Id > 0)
                 {
-                    var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
-                    productResponse = JsonSerializer.Deserialize<ProductResponse>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    if (productResponse == null || productResponse.Id <= 0)
-                    {
-                        ModelState.AddModelError("All", "Server error. Please contact administrator.");
-                        return Page();
-                    }
-                } 
-                else
+                    return RedirectPermanent($"/product/{firstProduct.Id}");
+                }
+
+                if (productResponse.StatusCode == System.Net.HttpStatusCode.Forbidden || productResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    ModelState.AddModelError("All", "Server error. Please contact administrator.");
+                    ModelState.AddModelError("All", "Only Administrators can create new products. Please sign in as an administrator.");
                     return Page();
                 }
             }
-            catch (HttpRequestException)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("All", "Server error. Please contact administrator.");
-                return Page();
+                _logger.LogError(ex, "Error creating product.");
             }
 
-            return RedirectPermanent($"/product/{productResponse.Id}");
+            ModelState.AddModelError("All", "Server error. Please contact administrator.");
+            return Page();
         }
     }
 }

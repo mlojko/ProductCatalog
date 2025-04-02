@@ -1,38 +1,29 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using WebApp.Models;
+using WebApp.Services;
 
 namespace WebApp.Pages
 {
     [Authorize]
-    public class IndexModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory) : PageModel
+    public class IndexModel(ILogger<IndexModel> logger, IProductService productService) : PageModel
     {
-        private readonly AppSettings _appSettings = _configuration.Value;
-        private readonly IHttpClientFactory _clientFactory = clientFactory;
+        private readonly ILogger<IndexModel> _logger = logger;
+        private readonly IProductService _productService = productService;
 
         public List<ProductResponse>? Products { get; private set; }
 
         public async Task OnGet()
         {
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_appSettings.ApiBaseUrl}/Product/GetProducts")
+            try
             {
-                Headers =
-                {
-                    { HeaderNames.Accept, "*/*" }
-                }
-            };
-
-            var httpClient = _clientFactory.CreateClient();
-            var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
-            var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions
+                Products = (await _productService.GetProductsAsync()).Products;
+            }
+            catch (Exception ex)
             {
-                PropertyNameCaseInsensitive = true
-            };
-            Products = JsonSerializer.Deserialize<List<ProductResponse>>(responseString, options);
+                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                _logger.LogError(ex, "Error getting products.");
+            }
         }
     }
 }

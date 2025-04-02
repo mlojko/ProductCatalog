@@ -38,7 +38,7 @@ namespace WebApp.Pages
                 return LocalRedirect(ReturnUrl);
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            ModelState.AddModelError("All", "Invalid login attempt.");
             return Page();
         }
     }
