@@ -21,7 +21,7 @@ namespace Api.Infrastructure.Services
             return _context.Users.Include(u => u.UserRoles)
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-                .SingleOrDefaultAsync(u => u.Username.Equals(userName, StringComparison.CurrentCulture));
+                .SingleOrDefaultAsync(u => u.Username == userName);
         }
     }
 }

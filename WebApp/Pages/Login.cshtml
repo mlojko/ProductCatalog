@@ -1,0 +1,39 @@
+﻿@page "/login"
+@model WebApp.Pages.LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+<div class="login-form">
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="Username">Username</label>
+            <input type="text" class="form-control" id="username" name="Username" asp-for="Username" />
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password">Password</label>
+            <input type="password" class="form-control" id="password" name="Password" asp-for="Password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="login-form__button-wrapper">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    .login-form {
+        max-width: 500px;
+    }
+    .login-form__button-wrapper {
+        margin-top: 20px;
+    }
+</style>

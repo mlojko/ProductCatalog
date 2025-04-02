@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
@@ -6,6 +7,7 @@ using WebApp.Models;
 
 namespace WebApp.Pages
 {
+    [Authorize]
     public class IndexModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory) : PageModel
     {
         private readonly AppSettings _appSettings = _configuration.Value;

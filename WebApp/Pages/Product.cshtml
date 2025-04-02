@@ -26,10 +26,15 @@
 
 @if (Model?.Product != null)
 {
+    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="product-butoon-wrapper">
         <a href="/product/edit/@Model.Product.Id" class="btn btn-outline-primary">Edit</a>
         <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Are you sure you want to delete this product?');">
             <input asp-for="Product.Id" type="hidden" />
+            <input asp-for="Product.Name" type="hidden" />
+            <input asp-for="Product.Price" type="hidden" />
+            <input asp-for="Product.Stock" type="hidden" />
+            <input asp-for="Product.Description" type="hidden" />
             <button type="submit" class="btn btn-danger">Delete</button>
         </form>
     </div>

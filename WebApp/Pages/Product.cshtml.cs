@@ -1,16 +1,21 @@
+using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using WebApp.Models;
+using WebApp.Services;
 
 namespace WebApp.Pages
 {
-    public class ProductModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory) : PageModel
+    [Authorize]
+    public class ProductModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory, IAuthService authService) : PageModel
     {
         private readonly AppSettings _appSettings = _configuration.Value;
         private readonly IHttpClientFactory _clientFactory = clientFactory;
+        private readonly IAuthService _authService = authService;
 
         [BindProperty]
         public ProductResponse? Product { get; set; }
@@ -58,20 +63,28 @@ namespace WebApp.Pages
 
             try
             {
+                var token = await _authService.GetTokenAsync() ?? string.Empty;
                 var httpClient = _clientFactory.CreateClient();
+                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
                 var httpResponseMessage = await httpClient.DeleteAsync($"{_appSettings.ApiBaseUrl}/Product/DeleteProduct/{Product.Id}");
-                if (!httpResponseMessage.IsSuccessStatusCode)
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    return RedirectToPage("/Index");
+                }
+
+                if (httpResponseMessage.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    ModelState.AddModelError("All", "Only administrators can delete products. Log in as administrator.");
+                } else
                 {
                     ModelState.AddModelError("All", "Server error. Please contact administrator.");
-                    return Page();
                 }
             }
             catch (HttpRequestException)
             {
                 ModelState.AddModelError("All", "Server error. Please contact administrator.");
-                return Page();
             }
-            return RedirectToPage("/Index");
+            return Page();
         }
     }
 }

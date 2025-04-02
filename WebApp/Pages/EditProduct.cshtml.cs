@@ -1,15 +1,19 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using WebApp.Models;
+using WebApp.Services;
 
 namespace WebApp.Pages
 {
-    public class EditProductModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory) : PageModel
+    [Authorize]
+    public class EditProductModel(IOptions<AppSettings> _configuration, IHttpClientFactory clientFactory, IAuthService authService) : PageModel
     {
         private readonly AppSettings _appSettings = _configuration.Value;
         private readonly IHttpClientFactory _clientFactory = clientFactory;
+        private readonly IAuthService _authService = authService;
 
         [BindProperty]
         public ProductResponse? Product { get; set; }
@@ -44,7 +48,9 @@ namespace WebApp.Pages
 
             try
             {
+                var token = await _authService.GetTokenAsync() ?? string.Empty;
                 var httpClient = _clientFactory.CreateClient();
+                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
                 var httpResponseMessage = await httpClient.PutAsJsonAsync($"{_appSettings.ApiBaseUrl}/Product/UpdateProduct/{Product.Id}", Product);
                 if (!httpResponseMessage.IsSuccessStatusCode)
                 {
