@@ -23,10 +23,10 @@ ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 ## Run migrations
-FROM build as migrations
+FROM build AS migrations
 RUN dotnet tool install --version 9.0.3 --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
-ENTRYPOINT dotnet-ef database update
+ENTRYPOINT dotnet-ef database update --context ProductsDbContext
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
