@@ -115,7 +115,16 @@ This section should list any major frameworks/libraries used to bootstrap your p
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Install prerequisites and follow the installation instructions
+Assumptions
+* All components run on HTTP port and therefore are not secure
+    - The UI component sends credentials to the API over HTTP protocol
+* The UI component stores unencrypted JWT token and therefore is not secure
+    - The JWT should be encrypted or a different method of storing the JWT should be used
+* The compose.yml file builds 1 extra container in order to run the EF Core Migrations
+    - Outside running the Migrations the container takes up unneccessary space
+    - Getting more than one context warning during compose up
+    - Need to investigate if there is a better way to do this
+
 
 ### Prerequisites
 
@@ -166,6 +175,8 @@ API
 * The 'GetProduct', 'GetProducts' and 'Login' endpoints do not require authentication.
 * You will need to authenticate as an 'admin' if you want to succesfully AddProduct, UpdateProduct or DeleteProduct.
 * To authenticate, make a call to the 'Login' endpoint with 'admin:admin' username:password combination.
+* Health check endpoint [http://localhost:8080/api/health](http://localhost:8080/api/health)
+* Health check UI endpoint [http://localhost:8080/healthcheck-ui](http://localhost:8080/healthcheck-ui)
 
 DB
 * If you want to inspect the database with DBeaver, use 'localhost' server name and port 1433
@@ -178,7 +189,7 @@ DB
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Add health check endpoint
+- [x] Add health check endpoint
 - [ ] Add unit tests
 - [ ] Add pagination for product listing
 - [ ] Add API rate limiting
@@ -235,7 +246,7 @@ Project Link: [https://github.com/mlojko/ProductCatalog](https://github.com/mloj
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
+During the process of developing this POC project I have visited and reviewed the following topics:
 
 * [Choose an Open Source License](https://choosealicense.com)
 * [Tutorial: Code First Approach in ASP.NET Core MVC with EF](https://medium.com/c-sharp-programming/tutorial-code-first-approach-in-asp-net-core-mvc-with-ef-5baf5af696e9)
@@ -244,7 +255,7 @@ Use this space to list resources you find helpful and would like to give credit 
 * [Use cookie authentication without ASP.NET Core Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-9.0)
 * [API Versioning in ASP.NET Core](https://code-maze.com/aspnetcore-api-versioning/)
 * [ASP.NET Core API Versioning](https://weblogs.asp.net/ricardoperes/asp-net-core-api-versioning)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+* [Implementing Health Checks in .NET 8](https://medium.com/@jeslurrahman/implementing-health-checks-in-net-8-c3ba10af83c3)
 * [Img Shields](https://shields.io)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

@@ -1,12 +1,16 @@
 using System.Text;
 using Api.Infrastructure.Helpers;
 using Api.Infrastructure.Services;
+using Api.Models.Health;
 using Api.Models.Products;
 using Api.Models.Settings;
 using Api.Models.Swagger;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using HealthChecks.UI.Client;
+using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -64,6 +68,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+builder.Services.AddHealthChecks();
+builder.Services.ConfigureHealthChecks(builder.Configuration);
+
 
 var app = builder.Build();
 
@@ -85,5 +92,15 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/api/health", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+app.UseHealthChecksUI(delegate (Options options)
+{
+    options.UIPath = "/healthcheck-ui";
+
+});
 
 app.Run();

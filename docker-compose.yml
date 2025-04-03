@@ -7,6 +7,8 @@ services:
       dockerfile: WebApp/Dockerfile
     ports:
       - "5000:8080"
+    networks:
+      - productcatalog
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - AppSettings__ApiBaseUrl=http://api:8080/api/v1
@@ -20,6 +22,8 @@ services:
       context: .
       dockerfile: Api/Dockerfile
       target: migrations
+    networks:
+      - productcatalog
     environment:
     - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
     depends_on:
@@ -33,9 +37,14 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
+    networks:
+      - productcatalog
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
+      - HealthCheck__HealthCheckEndpointProtocol=http
+      - HealthCheck__HealthCheckEndpointPort=8080
+      - HealthCheck__ProductCatalogWebUrl=http://webapp:8080
     depends_on:
       - db
   
@@ -46,8 +55,13 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    networks:
+      - productcatalog
     volumes:
       - sqlvolume:/var/opt/mssql
 
 volumes:
   sqlvolume:
+networks:
+    productcatalog:
+        driver: bridge
