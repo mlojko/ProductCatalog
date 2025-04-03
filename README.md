@@ -79,7 +79,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-A little project I was assigned for an interview
+A little project I was assigned as part of an interview
 
 Backend-end:
 * API accessing a DB
@@ -124,7 +124,7 @@ To get started on Windows, you will need the following:
 * Visual Studio 2022 [https://visualstudio.microsoft.com](https://visualstudio.microsoft.com)
 * Git with Git-Bash [https://git-scm.com/downloads](https://git-scm.com/downloads)
 
-Optional tools
+Optional tools:
 * DBeaver to inspect your SQL DB [https://dbeaver.io/download/](https://dbeaver.io/download/)
 * Postman to perform HTTP calls against the API outside of Swagger [https://www.postman.com/downloads/](https://www.postman.com/downloads/)
 
@@ -154,9 +154,22 @@ _Below is an example of how you can instruct your audience on installing and set
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+UI
+* The UI is available on port 5000 [http://localhost:5000/](http://localhost:5000/).
+* You will be asked to log in, use either 'admin:admin' or 'viewer:viewer' username:password combination.
+* After you login you will land on product listing page, with each product linking to a product detail page.
+* The 'admin' user can view, add, edit and delete products, 'viewer' can only view.
+* Viewer will receive error messages when trying to add, edit or delete products.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+API
+* The API is available on port 8080, visit Swagger link to view the endpoints [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html).
+* The 'GetProduct', 'GetProducts' and 'Login' endpoints do not require authentication.
+* You will need to authenticate as an 'admin' if you want to succesfully AddProduct, UpdateProduct or DeleteProduct.
+* To authenticate, make a call to the 'Login' endpoint with 'admin:admin' username:password combination.
+
+DB
+* If you want to inspect the database with DBeaver, use 'localhost' server name and port 1433
+* The DB password can be found API's [appsettings.json](https://github.com/mlojko/ProductCatalog/blob/master/Api/appsettings.json)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -165,15 +178,11 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/mlojko/ProductCatalog/issues) for a full list of proposed features (and known issues).
+- [ ] Add health check endpoint
+- [ ] Add unit tests
+- [ ] Add pagination for product listing
+- [ ] Add API rate limiting
+- [ ] Add Redis for caching
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -206,7 +215,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the Unlicense License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -215,9 +224,9 @@ Distributed under the Unlicense License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Martin Lojkovic - [LinkedIn](https://www.linkedin.com/in/martin-lojkovic-5056a259/)
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/mlojko/ProductCatalog](https://github.com/mlojko/ProductCatalog)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -229,13 +238,14 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
 
 * [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
+* [Tutorial: Code First Approach in ASP.NET Core MVC with EF](https://medium.com/c-sharp-programming/tutorial-code-first-approach-in-asp-net-core-mvc-with-ef-5baf5af696e9)
+* [JWT Authentication in .NET 8: A Complete Guide for Secure and Scalable Applications](https://medium.com/@solomongetachew112/jwt-authentication-in-net-8-a-complete-guide-for-secure-and-scalable-applications-6281e5e8667c)
+* [.NET 8.0 Web API JWT Authentication and Role-Based Authorization](https://dev.to/shahed1bd/net-80-web-api-jwt-authentication-and-role-based-authorization-42f1)
+* [Use cookie authentication without ASP.NET Core Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-9.0)
+* [API Versioning in ASP.NET Core](https://code-maze.com/aspnetcore-api-versioning/)
+* [ASP.NET Core API Versioning](https://weblogs.asp.net/ricardoperes/asp-net-core-api-versioning)
 * [React Icons](https://react-icons.github.io/react-icons/search)
+* [Img Shields](https://shields.io)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
