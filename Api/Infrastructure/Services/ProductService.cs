@@ -3,13 +3,34 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api.Infrastructure.Services
 {
-    public class ProductService(ProductsDbContext context) : IProductService
+    public class ProductService(ProductsDbContext context, IConfiguration configuration) : IProductService
     {
         private readonly ProductsDbContext _context = context;
+        private readonly int _productsPerPage = configuration.GetValue<int>("ProductsPerPage", 6);
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             return await _context.Products.ToListAsync();
+        }
+
+        public async Task<PagedProductsResult> GetProductsAsync(int page)
+        {
+            page--; // Adjust for zero-based index
+            if (page < 0)
+            {
+                page = 0; // Ensure page is not negative
+            }
+            var total = await _context.Products.CountAsync();
+            var products = await _context.Products.Skip(page * _productsPerPage).Take(_productsPerPage).ToListAsync();
+
+            return new PagedProductsResult
+            {
+                Products = products,
+                TotalCount = total,
+                PageSize = _productsPerPage,
+                CurrentPage = page + 1,
+                TotalPages = (int)Math.Ceiling((double)total / _productsPerPage)
+            };
         }
 
         public async Task<Product?> GetProductByIdAsync(int id)

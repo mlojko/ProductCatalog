@@ -15,35 +15,6 @@ namespace WebApp.Services
             PropertyNameCaseInsensitive = true
         };
 
-        public async Task<ProductHttpResponse> AddProductAsync(ProductPayload product, string token)
-        {
-            var httpClient = _clientFactory.CreateClient();
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            var httpResponseMessage = await httpClient.PostAsJsonAsync($"{_appSettings.ApiBaseUrl}/Product/AddProduct", product);
-            return await ParseSingleProductHttpRespnse(httpResponseMessage);
-        }        
-
-        public async Task<ProductHttpResponse> DeleteProductAsync(int id, string token)
-        {
-            var httpClient = _clientFactory.CreateClient();
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            var httpResponseMessage = await httpClient.DeleteAsync($"{_appSettings.ApiBaseUrl}/Product/DeleteProduct/{id}");
-
-            return new ProductHttpResponse
-            {
-                IsSuccessStatusCode = httpResponseMessage.IsSuccessStatusCode,
-                StatusCode = httpResponseMessage.StatusCode,
-            };
-        }
-
-        public async Task<ProductHttpResponse> GetProductAsync(int id)
-        {
-            var httpClient = _clientFactory.CreateClient();
-            var httpResponseMessage = await httpClient.GetAsync($"{_appSettings.ApiBaseUrl}/Product/GetProduct/{id}");
-            
-            return await ParseSingleProductHttpRespnse(httpResponseMessage);
-        }
-
         public async Task<ProductHttpResponse> GetProductsAsync()
         {
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_appSettings.ApiBaseUrl}/Product/GetProducts")
@@ -67,12 +38,62 @@ namespace WebApp.Services
             };
         }
 
+        public async Task<PagedProductsResponse> GetPagedProductsAsync(int page)
+        {
+            var httpClient = _clientFactory.CreateClient();
+            var httpResponseMessage = await httpClient.GetAsync($"{_appSettings.ApiBaseUrl}/Product/GetPagedProducts?page={page}");
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
+                var products = JsonSerializer.Deserialize<PagedProductsResponse>(responseString, _jsonSerializerOptions) ?? new PagedProductsResponse();
+                
+                products.IsSuccessStatusCode = httpResponseMessage.IsSuccessStatusCode;
+                products.StatusCode = httpResponseMessage.StatusCode;
+                return products;
+            }
+
+            return new PagedProductsResponse
+            {
+                IsSuccessStatusCode = httpResponseMessage.IsSuccessStatusCode,
+                StatusCode = httpResponseMessage.StatusCode
+            };
+        }
+
+        public async Task<ProductHttpResponse> GetProductAsync(int id)
+        {
+            var httpClient = _clientFactory.CreateClient();
+            var httpResponseMessage = await httpClient.GetAsync($"{_appSettings.ApiBaseUrl}/Product/GetProduct/{id}");
+
+            return await ParseSingleProductHttpRespnse(httpResponseMessage);
+        }
+
+        public async Task<ProductHttpResponse> AddProductAsync(ProductPayload product, string token)
+        {
+            var httpClient = _clientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var httpResponseMessage = await httpClient.PostAsJsonAsync($"{_appSettings.ApiBaseUrl}/Product/AddProduct", product);
+            return await ParseSingleProductHttpRespnse(httpResponseMessage);
+        }
+
         public async Task<ProductHttpResponse> UpdateProductAsync(int id, ProductResponse product, string token)
         {
             var httpClient = _clientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             var httpResponseMessage = await httpClient.PutAsJsonAsync($"{_appSettings.ApiBaseUrl}/Product/UpdateProduct/{id}", product);
-            
+
+            return new ProductHttpResponse
+            {
+                IsSuccessStatusCode = httpResponseMessage.IsSuccessStatusCode,
+                StatusCode = httpResponseMessage.StatusCode,
+            };
+        }
+
+        public async Task<ProductHttpResponse> DeleteProductAsync(int id, string token)
+        {
+            var httpClient = _clientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            var httpResponseMessage = await httpClient.DeleteAsync($"{_appSettings.ApiBaseUrl}/Product/DeleteProduct/{id}");
+
             return new ProductHttpResponse
             {
                 IsSuccessStatusCode = httpResponseMessage.IsSuccessStatusCode,

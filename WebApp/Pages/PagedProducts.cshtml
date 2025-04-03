@@ -1,0 +1,108 @@
+﻿@page "/PagedProducts/{pageNumber:int?}"
+@model PagedProductsModel
+
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Products";
+    var culture = CultureInfo.CreateSpecificCulture("en-US");
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<div class="text-center">
+    @if (Model.PagedProducts?.Products != null)
+    {
+        int columnCount = 0;
+        <div class="row">
+            @foreach (var product in Model.PagedProducts.Products)
+            {
+                if (columnCount == 0)
+                {
+                    @:<div class="row product-row">
+                }
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">@product.Price.ToString("C", culture)</p>
+                            <p class="card-text">Stock: @product.Stock</p>
+                            <a href="/product/@product.Id?returnUrl=/PagedProducts/@Model.PagedProducts.CurrentPage" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                columnCount++;
+                @if (columnCount == 3)
+                {
+                    columnCount = 0;
+                    @:</div>
+                }
+            }
+        </div>
+        @* <nav aria-label="Page navigation"> *@
+        @*     <ul class="pagination justify-content-center"> *@
+        @*         @for (int i = 1; i <= Model.PagedProducts.TotalPages; i++) *@
+        @*         { *@
+        @*             <li class="page-item @(i == Model.PagedProducts.CurrentPage ? "active" : "")"> *@
+        @*                 <a class="page-link" href="@Url.Page("/PagedProducts", new { pageNumber = i })">@i</a> *@
+        @*             </li> *@
+        @*         } *@
+        @*     </ul> *@
+        @* </nav> *@
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                @if (Model.PagedProducts.TotalPages > 4)
+                {
+                    <li class="page-item @(Model.PagedProducts.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Page("/PagedProducts", new { pageNumber = Model.PagedProducts.CurrentPage - 1 })" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.PagedProducts.TotalPages; i++)
+                {
+                    if (Model.PagedProducts.TotalPages > 4)
+                    {
+                        if (i == 1 || i == Model.PagedProducts.TotalPages || (i >= Model.PagedProducts.CurrentPage - 1 && i <= Model.PagedProducts.CurrentPage + 1))
+                        {
+                            <li class="page-item @(i == Model.PagedProducts.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Page("/PagedProducts", new { pageNumber = i })">@i</a>
+                            </li>
+                        }
+                        else if (i == 2 && Model.PagedProducts.CurrentPage > 3)
+                        {
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        }
+                        else if (i == Model.PagedProducts.TotalPages - 1 && Model.PagedProducts.CurrentPage < Model.PagedProducts.TotalPages - 2)
+                        {
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="page-item @(i == Model.PagedProducts.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Page("/PagedProducts", new { pageNumber = i })">@i</a>
+                        </li>
+                    }
+                }
+
+                @if (Model.PagedProducts.TotalPages > 4)
+                {
+                    <li class="page-item @(Model.PagedProducts.CurrentPage == Model.PagedProducts.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Page("/PagedProducts", new { pageNumber = Model.PagedProducts.CurrentPage + 1 })" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
+
+<style>
+    .product-row {
+        margin-bottom: 20px;
+    }
+</style>

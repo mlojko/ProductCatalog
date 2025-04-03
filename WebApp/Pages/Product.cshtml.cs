@@ -16,8 +16,9 @@ namespace WebApp.Pages
 
         [BindProperty]
         public ProductResponse? Product { get; set; }
+        public string? ReturnUrl { get; set; }
 
-        public async Task<IActionResult> OnGet(int id)
+        public async Task<IActionResult> OnGet(int id, string? returnUrl = null)
         {
             try
             {
@@ -26,6 +27,7 @@ namespace WebApp.Pages
 
                 if (productResponse.IsSuccessStatusCode && firstProduct != null && firstProduct.Id > 0)
                 {
+                    ReturnUrl = returnUrl;
                     Product = firstProduct;
                     return Page();
                 }

@@ -5,6 +5,7 @@ namespace WebApp.Services
     public interface IProductService
     {
         Task<ProductHttpResponse> GetProductsAsync();
+        Task<PagedProductsResponse> GetPagedProductsAsync(int page);
         Task<ProductHttpResponse> GetProductAsync(int id);
         Task<ProductHttpResponse> AddProductAsync(ProductPayload product, string token);
         Task<ProductHttpResponse> UpdateProductAsync(int id, ProductResponse product, string token);

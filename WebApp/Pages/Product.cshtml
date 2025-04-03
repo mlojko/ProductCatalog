@@ -6,9 +6,10 @@
 @{
     ViewData["Title"] = Model?.Product?.Name ?? "n/a";
     var culture = CultureInfo.CreateSpecificCulture("en-US");
+    var returnUrl = Model?.ReturnUrl ?? "/";
 }
 
-<a href="/" class="link-dark">Back to Products</a>
+<a href="@returnUrl" class="link-dark">Back to Products</a>
 <div class="product-detail">
     @if (Model?.Product != null)
     {

@@ -22,6 +22,14 @@ namespace Api.Controllers
             return Ok(products);
         }
 
+        [HttpGet("GetPagedProducts", Name = "GetPagedProducts")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> GetProducts(int page)
+        {
+            var products = await _productService.GetProductsAsync(page);
+            return Ok(products);
+        }
+
         [HttpGet("GetProducts", Name = "GetProductsV2")]        
         [MapToApiVersion("2.0")]
         public async Task<IActionResult> GetProductsV2()
