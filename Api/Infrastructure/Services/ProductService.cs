@@ -3,14 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api.Infrastructure.Services
 {
-    public class ProductService : IProductService
+    public class ProductService(ProductsDbContext context) : IProductService
     {
-        private readonly ProductsDbContext _context;
-
-        public ProductService(ProductsDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ProductsDbContext _context = context;
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
