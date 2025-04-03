@@ -277,7 +277,7 @@ During the process of developing this POC project I have visited and reviewed th
 [license-shield]: https://img.shields.io/github/license/mlojko/ProductCatalog.svg?style=for-the-badge
 [license-url]: https://github.com/mlojko/ProductCatalog/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
+[linkedin-url]: https://www.linkedin.com/in/martin-lojkovic-5056a259/
 [product-screenshot]: images/screenshot.png
 [.NET-9]: https://img.shields.io/badge/.NET%209-0078D7?style=for-the-badge&logoColor=4FC08D
 [NET-url]: https://dotnet.microsoft.com/en-us/download/dotnet/9.0
