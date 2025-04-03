@@ -122,8 +122,9 @@ Assumptions
     - The JWT should be encrypted or a different method of storing the JWT should be used
 * The compose.yml file builds 1 extra container in order to run the EF Core Migrations
     - Outside running the Migrations the container takes up unneccessary space
-    - Getting more than one context warning during compose up
     - Need to investigate if there is a better way to do this
+* The test coverage is incomplete
+    - Also testing is not configured to run automatically in docker 
 
 
 ### Prerequisites
@@ -175,12 +176,13 @@ API
 * The 'GetProduct', 'GetProducts' and 'Login' endpoints do not require authentication.
 * You will need to authenticate as an 'admin' if you want to succesfully AddProduct, UpdateProduct or DeleteProduct.
 * To authenticate, make a call to the 'Login' endpoint with 'admin:admin' username:password combination.
-* Health check endpoint [http://localhost:8080/api/health](http://localhost:8080/api/health)
-* Health check UI endpoint [http://localhost:8080/healthcheck-ui](http://localhost:8080/healthcheck-ui)
+* Health check endpoint [http://localhost:8080/api/health](http://localhost:8080/api/health).
+* Health check UI endpoint [http://localhost:8080/healthcheck-ui](http://localhost:8080/healthcheck-ui).
+* Run the test cases from Visual Studio and make sure the DB container is up and running.
 
 DB
-* If you want to inspect the database with DBeaver, use 'localhost' server name and port 1433
-* The DB password can be found API's [appsettings.json](https://github.com/mlojko/ProductCatalog/blob/master/Api/appsettings.json)
+* If you want to inspect the database with DBeaver, use 'localhost' server name and port 1433.
+* The DB password can be found API's [appsettings.json](https://github.com/mlojko/ProductCatalog/blob/master/Api/appsettings.json).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -190,7 +192,7 @@ DB
 ## Roadmap
 
 - [x] Add health check endpoint
-- [ ] Add unit tests
+- [x] Add unit tests
 - [ ] Add pagination for product listing
 - [ ] Add API rate limiting
 - [ ] Add Redis for caching

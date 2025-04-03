@@ -104,3 +104,4 @@ app.UseHealthChecksUI(delegate (Options options)
 });
 
 app.Run();
+public partial class Program { }
