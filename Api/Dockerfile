@@ -12,8 +12,10 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Api/Api.csproj", "Api/"]
+COPY ["Api.Tests/Api.Tests.csproj", "Api.Tests/"]
 RUN dotnet restore "./Api/Api.csproj"
-COPY . .
+RUN dotnet restore "./Api.Tests/Api.Tests.csproj"
+COPY . . 
 WORKDIR "/src/Api"
 RUN dotnet build "./Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
@@ -28,9 +30,13 @@ RUN dotnet tool install --version 9.0.3 --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 ENTRYPOINT dotnet-ef database update --context ProductsDbContext
 
+# This stage is used to run tests
+FROM build AS tests
+WORKDIR /src/Api.Tests
+ENTRYPOINT ["dotnet", "test", "--logger:trx"]
+
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Api.dll"]
-

@@ -120,11 +120,11 @@ Assumptions
     - The UI component sends credentials to the API over HTTP protocol
 * The UI component stores unencrypted JWT token and therefore is not secure
     - The JWT should be encrypted or a different method of storing the JWT should be used
+    - There is currently an issue with Antiforgery token
 * The compose.yml file builds 1 extra container in order to run the EF Core Migrations
     - Outside running the Migrations the container takes up unneccessary space
     - Need to investigate if there is a better way to do this
 * The test coverage is incomplete
-    - Also testing is not configured to run automatically in docker 
 
 
 ### Prerequisites

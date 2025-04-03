@@ -35,6 +35,8 @@ services:
     depends_on:
       migration:
         condition: service_completed_successfully
+      test:
+        condition: service_completed_successfully
 
   migration:
     image: migration:latest
@@ -61,6 +63,22 @@ services:
       - productcatalog
     volumes:
       - sqlvolume:/var/opt/mssql
+
+  test:
+    image: test:latest
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+      target: tests
+    networks:
+      - productcatalog
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
+    depends_on:
+      db:
+        condition: service_started
+      migration:
+        condition: service_completed_successfully
 
 volumes:
   sqlvolume:
