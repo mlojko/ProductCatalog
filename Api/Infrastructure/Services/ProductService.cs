@@ -1,8 +1,5 @@
-using Api.Models;
 using Api.Models.Products;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Api.Infrastructure.Services
 {
