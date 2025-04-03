@@ -13,21 +13,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - AppSettings__ApiBaseUrl=http://api:8080/api/v1
     depends_on:
-      - api
-      - migration
-  
-  migration:
-    image: migration:latest
-    build:
-      context: .
-      dockerfile: Api/Dockerfile
-      target: migrations
-    networks:
-      - productcatalog
-    environment:
-    - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
-    depends_on:
-    - db
+      api:
+        condition: service_started
 
   api:
     image: api:latest
@@ -46,8 +33,23 @@ services:
       - HealthCheck__HealthCheckEndpointPort=8080
       - HealthCheck__ProductCatalogWebUrl=http://webapp:8080
     depends_on:
-      - db
-  
+      migration:
+        condition: service_completed_successfully
+
+  migration:
+    image: migration:latest
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+      target: migrations
+    networks:
+      - productcatalog
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
+    depends_on:
+      db:
+        condition: service_started
+
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
@@ -63,5 +65,5 @@ services:
 volumes:
   sqlvolume:
 networks:
-    productcatalog:
-        driver: bridge
+  productcatalog:
+    driver: bridge
