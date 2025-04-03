@@ -258,11 +258,11 @@ Use this space to list resources you find helpful and would like to give credit 
 [product-screenshot]: images/screenshot.png
 [.NET-9]: https://img.shields.io/badge/.NET%209-0078D7?style=for-the-badge&logoColor=4FC08D
 [NET-url]: https://dotnet.microsoft.com/en-us/download/dotnet/9.0
-[ef-Core]: https://learn.microsoft.com/en-us/ef/core/
-[ef-url]: https://reactjs.org/
-[MSSQL]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[ef-Core]: https://img.shields.io/badge/EF%20Core-0078D7?style=for-the-badge
+[ef-url]: https://learn.microsoft.com/en-us/ef/core/
+[MSSQL]: https://img.shields.io/badge/MSSQL-CC2927?style=for-the-badge
 [sql-url]: https://www.microsoft.com/en-ca/sql-server/
-[Docker]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badg
+[Docker]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge
 [docker-url]: https://www.docker.com/
 [Copilot]: https://img.shields.io/badge/GitHub%20Copilot-7E3FFF?style=for-the-badge
-[copilot-url]: h[ttps://www.docker.com/](https://copilot.microsoft.com/chats/efUSKeD5DhZv41vQp7B2V)
+[copilot-url]: https://copilot.microsoft.com/
