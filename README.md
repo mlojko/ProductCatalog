@@ -33,7 +33,7 @@
   <h3 align="center">Product Catalog</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Quick links
     <br />
     <a href="https://github.com/mlojko/ProductCatalog"><strong>Explore the docs »</strong></a>
     <br />
@@ -94,10 +94,6 @@ Front-end:
 Containerization
 * BE, FE and DB run in docker containers
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -107,13 +103,10 @@ Use the `BLANK_README.md` to get started.
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
 * [![.NET 9][.NET-9]][NET-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![EF Core][ef-Core]][ef-url]
+* [![MSSQL][MSSQL]][sql-url]
+* [![Docker][Docker]][docker-url]
+* [![Copilot][Copilot]][copilot-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -122,39 +115,37 @@ This section should list any major frameworks/libraries used to bootstrap your p
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+Install prerequisites and follow the installation instructions
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+To get started on Windows, you will need the following:
+* .NET 9 SDK [https://dotnet.microsoft.com/en-us/download/dotnet/9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+* Visual Studio 2022 [https://visualstudio.microsoft.com](https://visualstudio.microsoft.com)
+* Git with Git-Bash [https://git-scm.com/downloads](https://git-scm.com/downloads)
+
+Optional tools
+* DBeaver to inspect your SQL DB [https://dbeaver.io/download/](https://dbeaver.io/download/)
+* Postman to perform HTTP calls against the API outside of Swagger [https://www.postman.com/downloads/](https://www.postman.com/downloads/)
 
 ### Installation
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
-1. Get a free API Key at [https://example.com](https://example.com)
+1. Start by creating a working directory and cd into it
 2. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone git@github.com:mlojko/ProductCatalog.git
    ```
-3. Install NPM packages
+3. CD into ProductCatalog directory
    ```sh
-   npm install
+   cd ProductCatalog
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
+4. Run Docker compose up command
    ```sh
-   git remote set-url origin github_username/repo_name
-   git remote -v # confirm the changes
+   docker-compose up
    ```
+5. Wait for the process to finish and visit [http://localhost:5000/](http://localhost:5000/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -267,17 +258,11 @@ Use this space to list resources you find helpful and would like to give credit 
 [product-screenshot]: images/screenshot.png
 [.NET-9]: https://img.shields.io/badge/.NET%209-0078D7?style=for-the-badge&logoColor=4FC08D
 [NET-url]: https://dotnet.microsoft.com/en-us/download/dotnet/9.0
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[ef-Core]: https://learn.microsoft.com/en-us/ef/core/
+[ef-url]: https://reactjs.org/
+[MSSQL]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[sql-url]: https://www.microsoft.com/en-ca/sql-server/
+[Docker]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badg
+[docker-url]: https://www.docker.com/
+[Copilot]: https://img.shields.io/badge/GitHub%20Copilot-7E3FFF?style=for-the-badge
+[copilot-url]: h[ttps://www.docker.com/](https://copilot.microsoft.com/chats/efUSKeD5DhZv41vQp7B2V)
