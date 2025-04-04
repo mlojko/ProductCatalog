@@ -49,21 +49,28 @@ namespace Api.Models.Products
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId);
 
-            modelBuilder.Entity<User>().HasData(
-                new User() { Id = 1, Username = "admin", Password = "$2a$11$M5oW82FBNXNkmXNEoEo7hepd.Nnz2vkFEz/riZUKSgH8T6MgrAxda" },
-                new User() { Id = 2, Username = "viewer", Password = "$2a$11$.sMJ./zBiI4quAi6F4mqwurhB8H3IlTYBcDVCo/O1nREh7dBkF1M." }
-            );
-
             modelBuilder.Entity<Role>().HasData(
                 new Role() { Id = 1, Name = "Admin", Description = "Admin Role" },
                 new Role() { Id = 2, Name = "Viewer", Description = "Viewer Role" }
             );
 
-            modelBuilder.Entity<UserRole>().HasData(
-                new UserRole() { UserId = 1, RoleId = 1 },
-                new UserRole() { UserId = 1, RoleId = 2 },
-                new UserRole() { UserId = 2, RoleId = 2 }
-            );
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                modelBuilder.Entity<User>().HasData(
+                    new User() { Id = 1, Username = "admin", Password = "$2a$11$M5oW82FBNXNkmXNEoEo7hepd.Nnz2vkFEz/riZUKSgH8T6MgrAxda" },
+                    new User() { Id = 2, Username = "viewer", Password = "$2a$11$.sMJ./zBiI4quAi6F4mqwurhB8H3IlTYBcDVCo/O1nREh7dBkF1M." }
+                );
+
+                modelBuilder.Entity<UserRole>().HasData(
+                    new UserRole() { UserId = 1, RoleId = 1 },
+                    new UserRole() { UserId = 1, RoleId = 2 },
+                    new UserRole() { UserId = 2, RoleId = 2 }
+                );
+            }
+
+            
+
+            
         }
     }
 }
