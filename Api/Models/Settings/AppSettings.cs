@@ -2,6 +2,7 @@
 {
     public class AppSettings
     {
-        public int ProductsPerPage { get; set; }
+        public bool Caching { get; set; }
+        public int ProductsPerPage { get; set; } = 6;
     }
 }

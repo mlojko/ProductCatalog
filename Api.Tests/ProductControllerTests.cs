@@ -1,7 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using Api.Infrastructure.Repositories;
 using Api.Infrastructure.Services;
@@ -19,7 +18,7 @@ using Moq;
 
 namespace Api.Tests
 {
-    [Collection("Sequential")]
+    //[Collection("Sequential")]
     public sealed class ProductControllerTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
     {
 
@@ -34,7 +33,6 @@ namespace Api.Tests
         private static readonly Mock<IDistributedCache> _mockCache = new();
         private static readonly Mock<IOptions<AppSettings>> _mockConfig = new();
         private static readonly Mock<ILogger<ProductService>> _mockLogger = new();
-        private readonly ProductService _productService = new(_mockLogger.Object, _mockRepo.Object, _mockRedis.Object, _mockConfig.Object);
 
         private ProductsDbContext GetInMemoryDbContext()
         {
@@ -58,13 +56,22 @@ namespace Api.Tests
                 new() { Id = 2, Name = "Product2", Price = 20 },
             };
 
+            var serializedProducts = JsonSerializer.Serialize(products);
+
+            _mockConfig.Setup(config => config.Value).Returns(new AppSettings { Caching = true, ProductsPerPage = 6 });
+
+            _mockCache.Setup(cache => cache.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Encoding.UTF8.GetBytes(serializedProducts));
+
             _mockRedis.Setup(redis => redis.GetString<IEnumerable<Product>>(It.IsAny<string>()))
                 .ReturnsAsync(products);
 
             _mockRepo.Setup(repo => repo.GetProductsAsync()).ReturnsAsync(products);
 
+            var productService = new ProductService(_mockLogger.Object, _mockRepo.Object, _mockRedis.Object, _mockConfig.Object);
+
             // Act
-            var result = await _productService.GetProductsAsync();
+            var result = await productService.GetProductsAsync();
 
             // Assert
             Assert.Equal(2, result.Count());

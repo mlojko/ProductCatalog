@@ -76,11 +76,14 @@ services:
       - productcatalog
     environment:
       - ConnectionStrings__DefaultConnection=Server=db;Database=ProductCatalog;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;MultipleActiveResultSets=True;
+      - Redis__ConnectionString=redis
     depends_on:
       db:
         condition: service_started
       migration:
         condition: service_completed_successfully
+      redis:
+        condition: service_started
 
   redis:
     image: redis:latest
