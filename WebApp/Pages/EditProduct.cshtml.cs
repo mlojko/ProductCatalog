@@ -56,6 +56,12 @@ namespace WebApp.Pages
                     return RedirectPermanent($"/product/{Product.Id}");
                 }
 
+                if (productResponse.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    ModelState.AddModelError("All", "Too many requests, try again later.");
+                    return Page();
+                }
+
                 if (productResponse.StatusCode == HttpStatusCode.Forbidden || productResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     ModelState.AddModelError("All", "Only Administrators can edit products. Please sign in as an administrator.");

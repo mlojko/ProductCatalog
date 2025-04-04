@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApp.Services;
@@ -33,10 +34,18 @@ namespace WebApp.Pages
                 return Page();
             }
 
-            if (await _authService.LogIn(Username, Password))
+            var respMessage = await _authService.LogIn(Username, Password);
+            if (respMessage.IsSuccessStatusCode)
             {
                 return LocalRedirect(ReturnUrl);
             }
+
+            if (respMessage.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                ModelState.AddModelError("All", "Too many requests, try again later.");
+                return Page();
+            }
+
 
             ModelState.AddModelError("All", "Invalid login attempt.");
             return Page();

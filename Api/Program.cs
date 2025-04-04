@@ -1,5 +1,7 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using Api.Infrastructure.Helpers;
+using Api.Infrastructure.Repositories;
 using Api.Infrastructure.Services;
 using Api.Models.Health;
 using Api.Models.Products;
@@ -11,6 +13,7 @@ using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -54,6 +57,32 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+// Adding Rate Limiting
+var rateLimitSttings = builder.Configuration.GetSection("RateLimits") ?? throw new InvalidOperationException("RateLimits is not configured.");
+
+
+var permitLimit = int.Parse(rateLimitSttings["PermitLimit"] ?? "3");
+var segmentsPerWindow = int.Parse(rateLimitSttings["SegmentsPerWindow"] ?? "5");
+var queueLimit = int.Parse(rateLimitSttings["QueueLimit"] ?? "0");
+var queueProcessingOrder = Enum.Parse<QueueProcessingOrder>(rateLimitSttings["QueueProcessingOrder"] ?? "OldestFirst");
+var window = int.Parse(rateLimitSttings["Window"] ?? "10");
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: partition => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                SegmentsPerWindow = segmentsPerWindow,
+                QueueLimit = queueLimit,
+                QueueProcessingOrder = queueProcessingOrder,
+                Window = TimeSpan.FromSeconds(window)
+            }));
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
 // Register ApplicationDbContext with SQL Server
 builder.Services.AddDbContext<ProductsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -62,6 +91,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasherHelper, PasswordHasherHelper>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -102,6 +132,7 @@ app.UseHealthChecksUI(delegate (Options options)
     options.UIPath = "/healthcheck-ui";
 
 });
+app.UseRateLimiter();
 
 app.Run();
 public partial class Program { }

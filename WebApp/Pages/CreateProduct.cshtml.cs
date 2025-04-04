@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.Services;
+using System.Net;
 
 namespace WebApp.Pages
 {
@@ -38,7 +39,13 @@ namespace WebApp.Pages
                     return RedirectPermanent($"/product/{firstProduct.Id}");
                 }
 
-                if (productResponse.StatusCode == System.Net.HttpStatusCode.Forbidden || productResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                if (productResponse.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    ModelState.AddModelError("All", "Too many requests, try again later.");
+                    return Page();
+                }
+
+                if (productResponse.StatusCode == HttpStatusCode.Forbidden || productResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     ModelState.AddModelError("All", "Only Administrators can create new products. Please sign in as an administrator.");
                     return Page();

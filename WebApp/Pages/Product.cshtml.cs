@@ -60,6 +60,12 @@ namespace WebApp.Pages
                     return RedirectToPage("/Index");
                 }
 
+                if (productResponse.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    ModelState.AddModelError("All", "Too many requests, try again later.");
+                    return Page();
+                }
+
                 if (productResponse.StatusCode == HttpStatusCode.Forbidden || productResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     ModelState.AddModelError("All", "Only administrators can delete products. Log in as an administrator.");

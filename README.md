@@ -170,6 +170,7 @@ UI
 * After you login you will land on product listing page, with each product linking to a product detail page.
 * The 'admin' user can view, add, edit and delete products, 'viewer' can only view.
 * Viewer will receive error messages when trying to add, edit or delete products.
+* User will receive error messages when exceeding rate limits of the API.
 
 API
 * The API is available on port 8080, visit Swagger link to view the endpoints [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html).
@@ -178,7 +179,8 @@ API
 * To authenticate, make a call to the 'Login' endpoint with 'admin:admin' username:password combination.
 * Health check endpoint [http://localhost:8080/api/health](http://localhost:8080/api/health).
 * Health check UI endpoint [http://localhost:8080/healthcheck-ui](http://localhost:8080/healthcheck-ui).
-* Run the test cases from Visual Studio and make sure the DB container is up and running.
+* When running test cases from Visual Studio make sure the DB container is up and running.
+* You can observe rate limits on Login, and AddProduct, UpdateProduct, DeleteProduct endpoints. See the rate limits in AppSetting.json file.
 
 DB
 * If you want to inspect the database with DBeaver, use 'localhost' server name and port 1433.
@@ -194,7 +196,7 @@ DB
 - [x] Add health check endpoint
 - [x] Add unit tests
 - [x] Add pagination for product listing
-- [ ] Add API rate limiting
+- [x] Add API rate limiting
 - [ ] Add Redis for caching
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -258,6 +260,9 @@ During the process of developing this POC project I have visited and reviewed th
 * [API Versioning in ASP.NET Core](https://code-maze.com/aspnetcore-api-versioning/)
 * [ASP.NET Core API Versioning](https://weblogs.asp.net/ricardoperes/asp-net-core-api-versioning)
 * [Implementing Health Checks in .NET 8](https://medium.com/@jeslurrahman/implementing-health-checks-in-net-8-c3ba10af83c3)
+* [Comprehensive Testing in .NET 8: Using Moq and In-Memory Databases](https://dev.to/extinctsion/comprehensive-testing-in-net-8-using-moq-and-in-memory-databases-ioo)
+* [Implementing Rate Limiting in ASP.NET Core Web API (.NET 8)](https://medium.com/@solomongetachew112/implementing-rate-limiting-in-asp-net-core-web-api-net-8-da7f82442fe0)
+* [Rate limiting middleware in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-9.0)
 * [Img Shields](https://shields.io)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

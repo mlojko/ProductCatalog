@@ -3,6 +3,7 @@ using Api.Models.Products;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Api.Controllers
 {
@@ -16,6 +17,7 @@ namespace Api.Controllers
 
         [HttpGet("GetProducts", Name = "GetProducts")]
         [MapToApiVersion("1.0")]
+        [DisableRateLimiting]
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productService.GetProductsAsync();
@@ -24,6 +26,7 @@ namespace Api.Controllers
 
         [HttpGet("GetPagedProducts", Name = "GetPagedProducts")]
         [MapToApiVersion("1.0")]
+        [DisableRateLimiting]
         public async Task<IActionResult> GetProducts(int page)
         {
             var products = await _productService.GetProductsAsync(page);
@@ -32,6 +35,7 @@ namespace Api.Controllers
 
         [HttpGet("GetProducts", Name = "GetProductsV2")]        
         [MapToApiVersion("2.0")]
+        [DisableRateLimiting]
         public async Task<IActionResult> GetProductsV2()
         {
             var products = await _productService.GetProductsAsync();
@@ -40,6 +44,7 @@ namespace Api.Controllers
 
         [HttpGet("GetProduct/{id}", Name = "GetProduct")]
         [MapToApiVersion("1.0")]
+        [DisableRateLimiting]
         public async Task<IActionResult> GetProduct(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);

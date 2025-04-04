@@ -5,6 +5,6 @@
         Task<string> GetTokenAsync();
         Task<bool> IsAuthenticatedAsync();
         Task LogOutAsync();
-        Task<bool> LogIn(string username, string password);
+        Task<HttpResponseMessage> LogIn(string username, string password);
     }
 }

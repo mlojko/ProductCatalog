@@ -38,7 +38,7 @@ namespace WebApp.Services
             await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        public async Task<bool> LogIn(string username, string password)
+        public async Task<HttpResponseMessage> LogIn(string username, string password)
         {
             var httpClient = _clientFactory.CreateClient();
             var httpResponseMessage = await httpClient.PostAsJsonAsync($"{_appSettings.ApiBaseUrl}/Auth/Login", new { username, password });
@@ -47,7 +47,7 @@ namespace WebApp.Services
                 var authResult = JsonSerializer.Deserialize<AuthResponse>(await httpResponseMessage.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (authResult == null)
                 {
-                    return false;
+                    return httpResponseMessage;
                 }
 
                 var claims = new List<Claim>
@@ -67,10 +67,10 @@ namespace WebApp.Services
                 var httpContext = _httpContextAccessor.HttpContext ?? throw new InvalidOperationException("HttpContext is null");
                 await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), ap);
 
-                return true;
+                return httpResponseMessage;
             }
             
-            return false;
+            return httpResponseMessage;
         }
     }
 }
