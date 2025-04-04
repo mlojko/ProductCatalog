@@ -152,7 +152,7 @@ namespace Api.Infrastructure.Services
                 if (res != null)
                 {
                     _logger.LogInformation("Cache miss for GetProductsAsync");
-                    var options = new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(5) };
+                    var options = new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(_appSettings.CacheDuration) };
                     _redisRepository.SetString(cacheKey, res, options).Wait();
                 }
             }
@@ -198,7 +198,7 @@ namespace Api.Infrastructure.Services
                 if (res != null)
                 {
                     _logger.LogInformation("Cache miss for GetProductByIdAsync");
-                    var options = new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(5) };
+                    var options = new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(_appSettings.CacheDuration) };
                     _redisRepository.SetString(cacheKey, res, options).Wait();
                 }
             }
