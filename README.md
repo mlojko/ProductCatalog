@@ -105,6 +105,7 @@ This section should list any major frameworks/libraries used to bootstrap your p
 * [![.NET 9][.NET-9]][NET-url]
 * [![EF Core][ef-Core]][ef-url]
 * [![MSSQL][MSSQL]][sql-url]
+* [![Redis][Redis]][redis-url]
 * [![Docker][Docker]][docker-url]
 * [![Copilot][Copilot]][copilot-url]
 
@@ -181,6 +182,7 @@ API
 * Health check UI endpoint [http://localhost:8080/healthcheck-ui](http://localhost:8080/healthcheck-ui).
 * When running test cases from Visual Studio make sure the DB container is up and running.
 * You can observe rate limits on Login, and AddProduct, UpdateProduct, DeleteProduct endpoints. See the rate limits in AppSetting.json file.
+* Watch for 'Cache hit for...' or 'Cache miss for...' in the log window to verify the Redis caching is working.
 
 DB
 * If you want to inspect the database with DBeaver, use 'localhost' server name and port 1433.
@@ -263,6 +265,7 @@ During the process of developing this POC project I have visited and reviewed th
 * [Comprehensive Testing in .NET 8: Using Moq and In-Memory Databases](https://dev.to/extinctsion/comprehensive-testing-in-net-8-using-moq-and-in-memory-databases-ioo)
 * [Implementing Rate Limiting in ASP.NET Core Web API (.NET 8)](https://medium.com/@solomongetachew112/implementing-rate-limiting-in-asp-net-core-web-api-net-8-da7f82442fe0)
 * [Rate limiting middleware in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-9.0)
+* [Distributed caching in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-9.0)
 * [Img Shields](https://shields.io)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -290,6 +293,8 @@ During the process of developing this POC project I have visited and reviewed th
 [ef-url]: https://learn.microsoft.com/en-us/ef/core/
 [MSSQL]: https://img.shields.io/badge/MSSQL-CC2927?style=for-the-badge
 [sql-url]: https://www.microsoft.com/en-ca/sql-server/
+[Redis]: https://img.shields.io/badge/Redis-CC2927?style=for-the-badge
+[redis-url]: https://redis.io/
 [Docker]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge
 [docker-url]: https://www.docker.com/
 [Copilot]: https://img.shields.io/badge/GitHub%20Copilot-7E3FFF?style=for-the-badge
