@@ -13,7 +13,6 @@ using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -23,11 +22,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 var jwtSettings = builder.Configuration.GetSection("JwtSettings") ?? throw new InvalidOperationException("JwtSettings is not configured.");
+var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "This is a hardcoded default super secure secret Key");
 
-#pragma warning disable CS8604 // Possible null reference argument.
-var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
-#pragma warning restore CS8604 // Possible null reference argument.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -57,10 +55,15 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+var redisSettings = builder.Configuration.GetSection("Redis") ?? throw new InvalidOperationException("Redis is not configured.");
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisSettings["ConnectionString"] ?? "localhost";
+    options.InstanceName = "RedisCacheDB";
+});
+
 // Adding Rate Limiting
 var rateLimitSttings = builder.Configuration.GetSection("RateLimits") ?? throw new InvalidOperationException("RateLimits is not configured.");
-
-
 var permitLimit = int.Parse(rateLimitSttings["PermitLimit"] ?? "3");
 var segmentsPerWindow = int.Parse(rateLimitSttings["SegmentsPerWindow"] ?? "5");
 var queueLimit = int.Parse(rateLimitSttings["QueueLimit"] ?? "0");
@@ -92,7 +95,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasherHelper, PasswordHasherHelper>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
+builder.Services.AddScoped<IRedisRepository, RedisRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -100,7 +103,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 builder.Services.AddHealthChecks();
 builder.Services.ConfigureHealthChecks(builder.Configuration);
-
 
 var app = builder.Build();
 

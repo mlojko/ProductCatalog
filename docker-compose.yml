@@ -1,4 +1,3 @@
-
 services:
   webapp:
     image: webapp:latest
@@ -32,11 +31,14 @@ services:
       - HealthCheck__HealthCheckEndpointProtocol=http
       - HealthCheck__HealthCheckEndpointPort=8080
       - HealthCheck__ProductCatalogWebUrl=http://webapp:8080
+      - Redis__ConnectionString=redis
     depends_on:
       migration:
         condition: service_completed_successfully
       test:
         condition: service_completed_successfully
+      redis:
+        condition: service_started
 
   migration:
     image: migration:latest
@@ -79,6 +81,13 @@ services:
         condition: service_started
       migration:
         condition: service_completed_successfully
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - productcatalog
 
 volumes:
   sqlvolume:

@@ -7,10 +7,14 @@ using Api.Infrastructure.Repositories;
 using Api.Infrastructure.Services;
 using Api.Models.Auth;
 using Api.Models.Products;
+using Api.Models.Settings;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace Api.Tests
@@ -18,7 +22,7 @@ namespace Api.Tests
     [Collection("Sequential")]
     public sealed class ProductControllerTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
     {
-        
+
         private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
             PropertyNameCaseInsensitive = true
@@ -26,7 +30,11 @@ namespace Api.Tests
         private readonly WebApplicationFactory<Program> _factory = factory;
 
         private static readonly Mock<IProductRepository> _mockRepo = new();
-        private readonly ProductService _productService = new(_mockRepo.Object);
+        private static readonly Mock<IRedisRepository> _mockRedis = new();
+        private static readonly Mock<IDistributedCache> _mockCache = new();
+        private static readonly Mock<IOptions<AppSettings>> _mockConfig = new();
+        private static readonly Mock<ILogger<ProductService>> _mockLogger = new();
+        private readonly ProductService _productService = new(_mockLogger.Object, _mockRepo.Object, _mockRedis.Object, _mockConfig.Object);
 
         private ProductsDbContext GetInMemoryDbContext()
         {
@@ -49,6 +57,10 @@ namespace Api.Tests
                 new() { Id = 1, Name = "Product1", Price = 10 },
                 new() { Id = 2, Name = "Product2", Price = 20 },
             };
+
+            _mockRedis.Setup(redis => redis.GetString<IEnumerable<Product>>(It.IsAny<string>()))
+                .ReturnsAsync(products);
+
             _mockRepo.Setup(repo => repo.GetProductsAsync()).ReturnsAsync(products);
 
             // Act
@@ -62,14 +74,12 @@ namespace Api.Tests
         /// <summary>
         /// Integration test to retrieve 1 product from DB. Assumes DB is seeded with at least 1 product
         /// </summary>
-        /// <param name="url"></param>
         /// <returns></returns>
-        [Theory]
-        [InlineData("/api/v1/Product/GetProduct/1")]
-        public async Task GetProduct_ReturnsOneProduct(string url)
+        [Fact]
+        public async Task GetProduct_ReturnsOneProduct()
         {
             var client = _factory.CreateClient();
-            var response = await client.GetAsync(url);
+            var response = await client.GetAsync("/api/v1/product/getproduct/1");
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             var content = await response.Content.ReadAsStringAsync();
             var product = JsonSerializer.Deserialize<Product>(content, _jsonSerializerOptions);
