@@ -199,7 +199,7 @@ DB
 - [x] Add unit tests
 - [x] Add pagination for product listing
 - [x] Add API rate limiting
-- [ ] Add Redis for caching
+- [x] Add Redis for caching
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
